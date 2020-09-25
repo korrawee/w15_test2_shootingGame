@@ -10,7 +10,7 @@ void setup()
   size(900,900);
   for(int i = 0 ; i < amount; i++)
   {
-   zombies[i] = new Zombie(); 
+   zombies[i] = new Zombie(random(900,1500),random(0,1000),50); 
   }
 }
 
@@ -24,43 +24,49 @@ void draw()
   {
    zombies[i].spawn();
    zombies[i].move();
+   zombies[i].visibility();
   }
   
-  if(keyPressed){
-    if(key == ' '){
-      bullet.shoot(shooter.getX(), shooter.getY());
-    }
-    
+  if(keyPressed)
+  {
+   if(key == ' ')
+   {
+    bullet.shoot(shooter.getX(), shooter.getY());
+   } 
   }
 }
 //====================================================
-class Shooter{
+class Shooter
+{
   float px = 30; //player
   float py = 30; //player
 
-  void player(){  //draw player
+  void player()
+  {  //draw player
     stroke(0);
     fill(255);
     ellipse(px,py,50,50); 
     fill(0);
     strokeWeight(10);
-    line(px+25, py, px+50, py);
-    
+    line(px+25, py, px+50, py);   
   }
   
-  float getX(){
+  float getX()
+  {
     return px; 
   }
   
-  float getY(){
+  float getY()
+  {
     return py;  
   }
  
-  void keyPressed(){           //Shooter move
-  if (keyPressed == true)
-  {
-    if(key == CODED)
+  void keyPressed()
+  {           //Shooter move
+   if (keyPressed == true)
    {
+    if(key == CODED)
+    {
      if(keyCode == UP)
      {
        py -= 10; 
@@ -77,63 +83,113 @@ class Shooter{
      {
       px +=  10; 
      }
+    if (px+25 > width) 
+    {
+     px = width - 30;
+    }
+    if (px-25 < 0) 
+    {
+     px = 30;
+    }
+    if (py+25 > height) 
+    {
+     py = height - 30;
+    }
+    if (py-25 < 0) 
+    {
+     py = 30;
+    }
    }
   }
  }
 }
 
 //====================================================
-class Bullet{
+class Bullet
+{
   int state;
   float x = 0;
   float y = 0;
   
-	Bullet(){
+  Bullet()
+  {
     state = 0; // state hide by default
-	}
+  }
 
-  void shoot(float tmpX, float tmpY){
+  void shoot(float tmpX, float tmpY)
+  {
     x += tmpX + 50;
     y = tmpY;
     noStroke();
     fill(#FF1493); //pink color
     ellipse(x, y, 10, 10);
-    if(x < width){
+    if(x < width)
+    {
       x += 1;
-    }else{
+    }
+    else
+    {
       x = tmpX; 
     }
   }
+  float getX()
+  {
+   return x; 
+  }
   
+  float getY()
+  {
+    return y; 
+  }
 }
-
 //====================================================
 class Zombie
 {
-  float x = random(900,1500);
-  float y = random(0,1000);
+  int state = 0;
+  float x ;
+  float y ;
+  float s ;
+  
+  Zombie(float xpos ,float ypos, float size)
+  {
+    x = xpos;
+    y = ypos;
+    s = size;
+  }
+  
   void spawn()
   {
+   if(state == 0)
+   {
     fill(#556B2F);
-    ellipse(x,y,50,50);
+    ellipse(x,y,s,s);
+   }
   }
-   void move()
+  void move()
+  { 
+    
+   if( x > shooter.getX())
+   {
+     x -= 0.5;
+   }
+   else if (x < shooter.getX())
+   {
+     x += 0.5;
+   }
+   if( y > shooter.getY())
+   {
+     y -= 0.5;
+   }
+   else if (y < shooter.getY())
+   {
+     y += 0.5;
+   }
+  }
+  void visibility()
   {
-    if( x > shooter.px)
+    if(bullet.getX() <= x + (s/2+5)  && bullet.getX() >= x - (s/2+5) && bullet.getY() <= y + (s/2+5) && bullet.getY() >= y - (s/2+5))
     {
-      x -= 0.5;
-    }
-    else if (x < shooter.px)
-    {
-      x += 0.5;
-    }
-    if( y > shooter.py)
-    {
-      y -= 0.5;
-    }
-    else if (y < shooter.py)
-    {
-      y += 0.5;
+      state = 1;
     }
   }
 }
