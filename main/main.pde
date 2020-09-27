@@ -10,7 +10,11 @@ void setup()
   size(900,900);
   for(int i = 0 ; i < amount; i++)
   {
-   zombies[i] = new Zombie(random(900,1500),random(0,1000),50); 
+//------------------------------------------------------------------------
+    // real random => first random (900,1500) second (0,900)
+    //random now test
+   zombies[i] = new Zombie(random(500,900),random(500,900),50,i,zombies); 
+//-------------------------------------------------------------------------
   }
 }
 
@@ -149,12 +153,18 @@ class Zombie
   float x ;
   float y ;
   float s ;
+  int id;
+  float speedX;
+  float speedY;
+  Zombie[] others;
   
-  Zombie(float xpos ,float ypos, float size)
+  Zombie(float xpos ,float ypos, float size,int idin,Zombie[] oin)
   {
     x = xpos;
     y = ypos;
     s = size;
+    id = idin ;
+    others = oin ;
   }
   
   void spawn()
@@ -167,29 +177,62 @@ class Zombie
   }
   void move()
   { 
-    
+   y = y + speedY;
+   x = x + speedX;
+   
    if( x > shooter.getX())
    {
-     x -= 0.5;
+     speedX = -0.5;
    }
    else if (x < shooter.getX())
    {
-     x += 0.5;
+     speedX = 0.5;
    }
    if( y > shooter.getY())
    {
-     y -= 0.5;
+     speedY = -0.5;
    }
    else if (y < shooter.getY())
    {
-     y += 0.5;
+     speedY = 0.5;
    }
+     //collision not fix
+//------------------------------------------------------------------------
+    //for (int i = id + 1; i < amount; i++)
+    //{
+     //if(others[i].x+30 <= this.x || others[i].y+30 <= this.y )
+     //{
+       //speedX = 0;
+       //speedY = 0;
+     //}
+    //}
+//-------------------------------------------------------------------------
   }
   void visibility()
   {
-    if(bullet.getX() <= x + (s/2+5)  && bullet.getX() >= x - (s/2+5) && bullet.getY() <= y + (s/2+5) && bullet.getY() >= y - (s/2+5))
+    if( bullet.getX() <= this.right()  && bullet.getX() >= this.left() && bullet.getY() <= this.buttom() && bullet.getY() >= this.top() )
     {
       state = 1;
     }
+  }
+  
+  float left()
+  {
+    return x - (s/2+5);
+  }
+  
+  float right()
+  {
+    return x + (s/2+5);
+  }
+  
+  float top()
+  {
+    return y - (s/2+5);
+  }
+  
+  float buttom()
+  {
+    return y + (s/2+5);
   }
 }
