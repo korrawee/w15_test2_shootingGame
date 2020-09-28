@@ -10,11 +10,7 @@ void setup()
   size(900,900);
   for(int i = 0 ; i < amount; i++)
   {
-//------------------------------------------------------------------------
-    // real random => first random (900,1500) second (0,900)
-    //random now test
-   zombies[i] = new Zombie(random(500,900),random(500,900),50,i,zombies); 
-//-------------------------------------------------------------------------
+   zombies[i] = new Zombie(random(900,1500),random(0,900),50,i,zombies); 
   }
 }
 
@@ -29,6 +25,7 @@ void draw()
    zombies[i].spawn();
    zombies[i].move();
    zombies[i].visibility();
+   zombies[i].collision();
   }
   
   if(keyPressed)
@@ -196,17 +193,6 @@ class Zombie
    {
      speedY = 0.5;
    }
-     //collision not fix
-//------------------------------------------------------------------------
-    //for (int i = id + 1; i < amount; i++)
-    //{
-     //if(others[i].x+30 <= this.x || others[i].y+30 <= this.y )
-     //{
-       //speedX = 0;
-       //speedY = 0;
-     //}
-    //}
-//-------------------------------------------------------------------------
   }
   void visibility()
   {
@@ -215,6 +201,29 @@ class Zombie
       state = 1;
     }
   }
+  
+ void collision()
+ {
+    for (int i = 1; i < amount; i++)
+    {
+     float dx = others[i].x - x;
+     float dy = others[i].y - y;
+     float distance = sqrt(dx*dx + dy*dy);
+     float minDist = others[i].s/2+5 + s/2+5;
+     if( distance < minDist)
+     {
+        float angle = atan2(dy, dx);
+        float tempX = x + cos(angle) * minDist;
+        float tempY = y + sin(angle) * minDist;
+        float ax = (tempX - others[i].x) *0.05 ;
+        float ay = (tempY - others[i].y) *0.05;
+        speedX -= ax;
+        speedY -= ay;
+        others[i].speedX += ax;
+        others[i].speedY += ay;
+     }
+    }
+ }
   
   float left()
   {
@@ -235,4 +244,7 @@ class Zombie
   {
     return y + (s/2+5);
   }
+  
+  
+
 }
