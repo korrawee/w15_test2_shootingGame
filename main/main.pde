@@ -20,7 +20,7 @@ void draw()
  background(#FFFFFF);
  shooter.player();
  shooter.keyPressed();
-  for(int i = 0 ; i < amount; i++)
+  for(int i = 0 ; i < 4; i++)
   {
    zombies[i].spawn();
    zombies[i].move();
@@ -147,6 +147,8 @@ class Bullet
 class Zombie
 {
   int state = 0;
+  int count = 0;
+  float tmpSize;
   float x ;
   float y ;
   float s ;
@@ -160,6 +162,7 @@ class Zombie
     x = xpos;
     y = ypos;
     s = size;
+    tmpSize = size;
     id = idin ;
     others = oin ;
   }
@@ -198,7 +201,15 @@ class Zombie
   {
     if( bullet.getX() <= this.right()  && bullet.getX() >= this.left() && bullet.getY() <= this.buttom() && bullet.getY() >= this.top() )
     {
-      state = 1;
+      if(count == 3){
+        state = 1;
+        count = 0;
+        s = tmpSize;
+      }
+      count++;
+      s *= 1.2;
+      System.out.println("collided");
+      
     }
   }
   
