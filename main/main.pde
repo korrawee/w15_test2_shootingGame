@@ -10,7 +10,7 @@ void setup()
   size(900,900);
   for(int i = 0 ; i < amount; i++)
   {
-   zombies[i] = new Zombie(random(900,1500),random(0,900),50,i,zombies); 
+   zombies[i] = new Zombie(random(900,width/2),random(0,height),50,i,zombies); 
   }
 }
 
@@ -148,7 +148,10 @@ class Zombie
 {
   int state = 0;
   int count = 0;
+  int time = 0;
   float tmpSize;
+  float tmpX;
+  float tmpY;
   float x ;
   float y ;
   float s ;
@@ -196,20 +199,35 @@ class Zombie
    {
      speedY = 0.5;
    }
+   tmpX = speedX;
+   tmpY = speedY;
   }
   void visibility()
   {
-    if( bullet.getX() <= this.right()  && bullet.getX() >= this.left() && bullet.getY() <= this.buttom() && bullet.getY() >= this.top() )
-    {
-      if(count == 3){
+    if(count == 3){
         state = 1;
         count = 0;
+        speedX = tmpX;
+        speedY = tmpY;
         s = tmpSize;
       }
+      if(count > 0){
+        speedX = 0;
+        speedY = 0;
+        if(time == 10){
+          count = 0;  
+          time = 0;
+        }
+        time++;
+      }
+      System.out.println(count +"   " + time);
+     //zombie shooted
+    if( bullet.getX() <= this.right()  && bullet.getX() >= this.left() && bullet.getY() <= this.buttom() && bullet.getY() >= this.top() )
+    {
+
       count++;
+  
       s *= 1.2;
-      System.out.println("collided");
-      
     }
   }
   
